@@ -1,108 +1,856 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chris Williams Portfolio</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <style>
-      @import url("https://fonts.googleapis.com/css?family=IBM%20Plex%20Sans:500|IBM%20Plex%20Sans:300");
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h2>AI/ML. Game Design. Backend Engineer.<br /></h2>
-      <button><a href="#footer">Scroll</a></button>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chris — Backend Engineer</title>
+<meta name="description" content="Chris — backend engineer at TLabs / Opendots. Distributed systems, event-driven architecture, Python/FastAPI, Elasticsearch." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --bg-soft: #111114;
+    --fg: #ededee;
+    --fg-dim: #9a9aa3;
+    --fg-dimmer: #565660;
+    --line: #1f1f24;
+    --accent: #c8ff5f;
+    --accent-2: #7c5cff;
+    --warm: #ff9b6a;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Subtle grain */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* Aurora background blob */
+  .aurora {
+    position: fixed;
+    top: -20%; left: -10%;
+    width: 80vw; height: 80vw;
+    background: radial-gradient(circle at center, rgba(124,92,255,0.18), transparent 60%);
+    filter: blur(60px);
+    z-index: -1;
+    animation: drift 20s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  .aurora.two {
+    top: auto; bottom: -30%; left: auto; right: -20%;
+    background: radial-gradient(circle at center, rgba(200,255,95,0.10), transparent 60%);
+    animation-delay: -8s;
+  }
+  @keyframes drift {
+    0% { transform: translate(0,0) scale(1); }
+    100% { transform: translate(8vw, 6vh) scale(1.15); }
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    pointer-events: none;
+    z-index: 999;
+    transform: translate(-50%,-50%);
+    transition: width .25s ease, height .25s ease, background .25s ease, opacity .25s ease;
+    mix-blend-mode: difference;
+    opacity: 0;
+  }
+  .cursor.active { opacity: 1; }
+  .cursor.hover { width: 36px; height: 36px; background: var(--accent); }
+  @media (hover: none) { .cursor { display: none; } }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(10,10,11,0.5);
+    border-bottom: 1px solid transparent;
+    transition: border-color .3s ease;
+  }
+  nav.scrolled { border-color: var(--line); }
+  .logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+  }
+  .logo span { color: var(--accent); }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .nav-links a {
+    color: var(--fg-dim);
+    text-decoration: none;
+    transition: color .25s ease;
+    position: relative;
+  }
+  .nav-links a::before {
+    content: '';
+    position: absolute;
+    left: -14px; top: 50%;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translateY(-50%) scale(0);
+    transition: transform .25s ease;
+  }
+  .nav-links a:hover { color: var(--fg); }
+  .nav-links a:hover::before { transform: translateY(-50%) scale(1); }
+  @media (max-width: 720px) {
+    nav { padding: 18px 24px; }
+    .nav-links { gap: 18px; font-size: 12px; }
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+  }
+  .hero-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--fg-dim);
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    background: rgba(255,255,255,0.02);
+    width: fit-content;
+    opacity: 0;
+    animation: fadeUp .8s .1s forwards;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  h1.title {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: clamp(48px, 9vw, 132px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+    opacity: 0;
+    animation: fadeUp 1s .3s forwards;
+  }
+  h1.title em {
+    font-style: italic;
+    color: var(--accent);
+    position: relative;
+  }
+  .subtitle {
+    max-width: 580px;
+    font-size: clamp(16px, 1.5vw, 19px);
+    color: var(--fg-dim);
+    line-height: 1.55;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 1s .6s forwards;
+  }
+  .subtitle strong { color: var(--fg); font-weight: 500; }
+  .cta-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 1s .9s forwards;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    border-radius: 99px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all .3s ease;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0a0b;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(200,255,95,0.25); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--fg);
+    border: 1px solid var(--line);
+  }
+  .btn-ghost:hover { border-color: var(--fg-dim); background: rgba(255,255,255,0.03); }
+  .arrow { transition: transform .3s ease; }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Sections */
+  section { padding: 120px 48px; position: relative; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--fg-dimmer);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .label::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--fg-dimmer);
+  }
+  h2 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+    max-width: 900px;
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+  .about-text p {
+    font-size: 17px;
+    color: var(--fg-dim);
+    margin-bottom: 20px;
+    max-width: 540px;
+  }
+  .about-text p strong { color: var(--fg); font-weight: 500; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    padding: 32px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(124,92,255,0.04), rgba(200,255,95,0.02));
+  }
+  .stat .num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--fg);
+  }
+  .stat .num em { color: var(--accent); font-style: italic; }
+  .stat .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--fg-dim);
+    margin-top: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Work */
+  .work-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .work-item {
+    border-bottom: 1px solid var(--line);
+    padding: 36px 0;
+    display: grid;
+    grid-template-columns: 80px 1fr 1.5fr 100px;
+    gap: 32px;
+    align-items: start;
+    cursor: pointer;
+    position: relative;
+    transition: padding .4s ease;
+  }
+  .work-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 0; height: 100%;
+    background: linear-gradient(90deg, rgba(200,255,95,0.04), transparent);
+    transition: width .5s ease;
+    z-index: -1;
+  }
+  .work-item:hover::before { width: 100%; }
+  .work-item:hover { padding-left: 24px; }
+  .work-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--fg-dimmer);
+  }
+  .work-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    line-height: 1.15;
+    color: var(--fg);
+    transition: color .3s ease;
+  }
+  .work-item:hover .work-title { color: var(--accent); }
+  .work-desc {
+    font-size: 14px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+  }
+  .work-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--fg-dimmer);
+    text-align: right;
+  }
+  @media (max-width: 900px) {
+    .work-item { grid-template-columns: 60px 1fr; }
+    .work-desc, .work-meta { grid-column: 2; }
+    .work-meta { text-align: left; margin-top: 12px; }
+  }
+
+  /* Stack */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .stack-card {
+    padding: 28px 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.015);
+    transition: all .4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .stack-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: translateX(-100%);
+    transition: transform .8s ease;
+  }
+  .stack-card:hover { border-color: var(--fg-dimmer); transform: translateY(-4px); }
+  .stack-card:hover::before { transform: translateX(100%); }
+  .stack-card h3 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+  .stack-card h3 em { color: var(--accent); font-style: italic; }
+  .stack-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.04);
+    color: var(--fg-dim);
+    border: 1px solid var(--line);
+  }
+
+  /* Now / writing */
+  .now-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) { .now-grid { grid-template-columns: 1fr; } }
+  .now-card {
+    padding: 32px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.015);
+    position: relative;
+  }
+  .now-card .label { margin-bottom: 16px; }
+  .now-card h3 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: 26px;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .now-card p {
+    font-size: 14px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+  }
+  .now-card .sprint-progress {
+    display: flex;
+    gap: 4px;
+    margin-top: 20px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .progress-bar.done { background: var(--accent); }
+  .progress-bar.active { background: linear-gradient(90deg, var(--accent), var(--line)); }
+
+  /* Contact */
+  .contact {
+    text-align: center;
+    padding: 160px 48px;
+    border-top: 1px solid var(--line);
+  }
+  .contact h2 { margin: 0 auto 32px; }
+  .contact-email {
+    display: inline-block;
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 48px);
+    color: var(--fg);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 8px;
+    transition: all .3s ease;
+    font-style: italic;
+  }
+  .contact-email:hover { color: var(--accent); border-color: var(--accent); }
+  .socials {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 48px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .socials a {
+    color: var(--fg-dim);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color .25s ease;
+  }
+  .socials a:hover { color: var(--accent); }
+
+  /* Footer */
+  footer {
+    padding: 32px 48px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--fg-dimmer);
+  }
+  @media (max-width: 720px) {
+    footer { flex-direction: column; gap: 12px; padding: 24px; }
+  }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Marquee */
+  .marquee {
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 24px 0;
+    background: var(--bg-soft);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 64px;
+    animation: scroll 40s linear infinite;
+    white-space: nowrap;
+    width: max-content;
+  }
+  .marquee span {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    color: var(--fg-dim);
+    font-style: italic;
+  }
+  .marquee span::after {
+    content: '✦';
+    margin-left: 64px;
+    color: var(--accent);
+    font-style: normal;
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="aurora"></div>
+<div class="aurora two"></div>
+<div class="cursor" id="cursor"></div>
+
+<nav id="nav">
+  <div class="logo">chris<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#about" data-hover>About</a></li>
+    <li><a href="#work" data-hover>Work</a></li>
+    <li><a href="#stack" data-hover>Stack</a></li>
+    <li><a href="#now" data-hover>Now</a></li>
+    <li><a href="#contact" data-hover>Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div class="availability">
+      <div class="dot"></div>
+      <span>Currently shipping at TLabs / Opendots</span>
     </div>
+    <h1 class="title">Building <em>resilient</em><br>backend systems<br>that don't <em>lie</em>.</h1>
+    <p class="subtitle">
+      I'm <strong>Chris</strong> — a backend engineer focused on distributed systems, event-driven architecture, and the unglamorous infrastructure work that keeps data honest. Currently architecting platform ingestion and conversational AI pipelines at <strong>Opendots</strong>.
+    </p>
+    <div class="cta-row">
+      <a href="#work" class="btn btn-primary" data-hover>
+        See selected work <span class="arrow">→</span>
+      </a>
+      <a href="mailto:chris@tlabs.ai" class="btn btn-ghost" data-hover>
+        Get in touch
+      </a>
+    </div>
+  </div>
+</section>
 
-    <!-- Add the .cube-animation class to the footer element -->
-    <footer id="footer" class="cube-animation">
-      <div class="col col1">
-        <h3>Chris Williams</h3>
-        <h4>Software Engineer</h4>
-        <p>Made with <span style="color: #ba6573">❤</span> using fancy CSS</p>
-        <div class="social">
-          <!-- Existing links -->
-          <a
-            href="https://github.com/TheRealChrisWilliams"
-            target="\_blank"
-            class="link"
-          >
-            <img src="github.svg" alt="" />
-          </a>
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Python</span><span>FastAPI</span><span>Elasticsearch</span><span>PostgreSQL</span><span>AWS SQS</span><span>OAuth 2.0</span><span>Distributed Systems</span><span>Event-Driven</span><span>Python</span><span>FastAPI</span><span>Elasticsearch</span><span>PostgreSQL</span><span>AWS SQS</span><span>OAuth 2.0</span><span>Distributed Systems</span><span>Event-Driven</span>
+  </div>
+</div>
 
-          <!-- Link to download the resume -->
-          <a
-            href="docs/Chris_Williams_Resume.pdf"
-            download="Chris_Williams_Resume.pdf"
-            class="link"
-          >
-            <h6>Resume</h6>
-          </a>
-        </div>
-        <p style="color: #818181; font-size: smaller">
-          2024 © All Rights Reserved
-        </p>
+<section id="about">
+  <div class="container reveal">
+    <div class="label">About</div>
+    <h2>Senior architect trajectory. Currently embedded in the <em>messy middle</em> where infra meets product.</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I work on the part of the stack most people pretend doesn't exist — the polling schedulers, the queue consumers, the OAuth flows that need to hold up under partial failure, and the silent data-loss bugs that don't show up until quarter-end.</p>
+        <p>My favorite problems are the ones where <strong>the system reports success and quietly drops your data</strong>. Bulk writes with partial failures. Checkpoints that advance through errors. Pools that exhaust themselves before the first request lands. The bugs that teach you the difference between a wrapper that catches exceptions and one that handles them.</p>
+        <p>Lately: building Twitter/X integration end-to-end for an enterprise CX platform — OAuth, multi-stream polling, conversation linking, queue handoff to a generation service. Before that: review ingestion, analytics pipelines, and the kind of database-connection-pool postmortem you only get to write once.</p>
       </div>
-      <div class="backdrop"></div>
-
-      <!-- Add the HTML structure for the cube animation -->
-      <div class="content">
-        <div class="shape">
-          <div class="cube step1">
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-          </div>
-          <div class="cube step2">
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-          </div>
-          <div class="cube step3">
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-          </div>
-          <div class="cube step4">
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-          </div>
-          <div class="cube step5">
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-          </div>
-          <div class="cube step6">
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-            <div class="side"></div>
-          </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="num"><em>2</em></div>
+          <div class="lbl">Sprints shipped<br>(Twitter/X)</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>8</em></div>
+          <div class="lbl">Security/correctness<br>fixes pre-merge</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>76</em></div>
+          <div class="lbl">Tests green<br>after refactor</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>0</em></div>
+          <div class="lbl">Silent data-loss<br>paths remaining</div>
         </div>
       </div>
-    </footer>
-  </body>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="container reveal">
+    <div class="label">Selected Work</div>
+    <h2>Things I've built, fixed, or argued <em>strongly</em> for.</h2>
+    <div class="work-list">
+
+      <div class="work-item" data-hover>
+        <div class="work-num">01</div>
+        <div class="work-title">Twitter/X Platform Integration</div>
+        <div class="work-desc">Architected and shipped end-to-end ingestion: OAuth 2.0 + PKCE with Fernet-encrypted verifier, multi-stream polling (mentions / search / DMs), per-handle rate-limit isolation, lazy author enrichment, thread hydration with staleness gating, and queue-based handoff to a downstream generation service.</div>
+        <div class="work-meta">Python · FastAPI<br>Elasticsearch · SQS<br>2026</div>
+      </div>
+
+      <div class="work-item" data-hover>
+        <div class="work-num">02</div>
+        <div class="work-title">Silent Data-Loss Fix in ES Bulk Writes</div>
+        <div class="work-desc">Found and fixed a checkpoint-advancement bug where Elasticsearch bulk writes with <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">raise_on_error=False</code> were silently dropping documents. Refactored three streams to gate checkpoint advancement on <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">not errors</code>, surfacing partial-failure state through tuple return signatures. 76 tests passing.</div>
+        <div class="work-meta">Elasticsearch<br>Python<br>2026-05</div>
+      </div>
+
+      <div class="work-item" data-hover>
+        <div class="work-num">03</div>
+        <div class="work-title">PostgreSQL Pool Exhaustion Postmortem</div>
+        <div class="work-desc">Root-caused a production outage where <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">FATAL: remaining connection slots reserved for SUPERUSER</code> was knocking out the entire core API. Traced to module-level pool instantiation × Windows spawn × ProcessPoolExecutor = ~100 idle connections at rest. Fix: lazy-init + shared pool across workers.</div>
+        <div class="work-meta">PostgreSQL<br>psycopg_pool<br>2026-05</div>
+      </div>
+
+      <div class="work-item" data-hover>
+        <div class="work-num">04</div>
+        <div class="work-title">OAuth Race Condition Hardening</div>
+        <div class="work-desc">Eight security and correctness fixes shipped in one pre-merge review: tenant-isolation org membership check, PKCE state burned before token exchange, postMessage origin validation, ES advisory locks via <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">op_type=create</code>, Painless-script merge semantics for nested account dicts, and three more.</div>
+        <div class="work-meta">OAuth 2.0 · PKCE<br>Security<br>2026-05</div>
+      </div>
+
+      <div class="work-item" data-hover>
+        <div class="work-num">05</div>
+        <div class="work-title">Two-Repo Event-Driven Architecture</div>
+        <div class="work-desc">Reworked the integration model between the ingestion service and the response-generation service from synchronous HTTP push to SQS-based pull. Generators dequeue, fetch their own context from Elasticsearch, and write results back — no inter-service HTTP, no shared deployment cadence.</div>
+        <div class="work-meta">AWS SQS<br>Event-Driven<br>2026</div>
+      </div>
+
+      <div class="work-item" data-hover>
+        <div class="work-num">06</div>
+        <div class="work-title">Analytics Bug — search_phase_execution</div>
+        <div class="work-desc">Partial fix shipped for an intermittent ES aggregation failure across the analytics surface. Migrated <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">stats_bucket</code> aggregations to <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);">cardinality</code>, instrumented the failure path with full query-body JSON logging so the next failure exposes the root cause instead of swallowing it.</div>
+        <div class="work-meta">Elasticsearch<br>Observability<br>2026-05</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="container reveal">
+    <div class="label">Stack</div>
+    <h2>Tools I reach for when something needs to <em>actually work</em>.</h2>
+    <div class="stack-grid">
+      <div class="stack-card" data-hover>
+        <h3>Backend <em>core</em></h3>
+        <div class="stack-tags">
+          <span class="tag">Python</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">asyncio</span>
+          <span class="tag">APScheduler</span>
+        </div>
+      </div>
+      <div class="stack-card" data-hover>
+        <h3>Data <em>layer</em></h3>
+        <div class="stack-tags">
+          <span class="tag">Elasticsearch</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">psycopg_pool</span>
+          <span class="tag">S3</span>
+        </div>
+      </div>
+      <div class="stack-card" data-hover>
+        <h3>Messaging <em>&amp; queues</em></h3>
+        <div class="stack-tags">
+          <span class="tag">AWS SQS</span>
+          <span class="tag">Event-driven</span>
+          <span class="tag">Pull consumers</span>
+        </div>
+      </div>
+      <div class="stack-card" data-hover>
+        <h3>Auth <em>&amp; security</em></h3>
+        <div class="stack-tags">
+          <span class="tag">OAuth 2.0</span>
+          <span class="tag">PKCE</span>
+          <span class="tag">JWT</span>
+          <span class="tag">Fernet</span>
+        </div>
+      </div>
+      <div class="stack-card" data-hover>
+        <h3>Platform <em>integrations</em></h3>
+        <div class="stack-tags">
+          <span class="tag">Twitter/X API v2</span>
+          <span class="tag">Google Business</span>
+        </div>
+      </div>
+      <div class="stack-card" data-hover>
+        <h3>Practice <em>&amp; tooling</em></h3>
+        <div class="stack-tags">
+          <span class="tag">pytest</span>
+          <span class="tag">Architecture review</span>
+          <span class="tag">Postmortem writing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="now">
+  <div class="container reveal">
+    <div class="label">Now</div>
+    <h2>What I'm actually working on this <em>week</em>.</h2>
+    <div class="now-grid">
+      <div class="now-card" data-hover>
+        <div class="label">Sprint 2 · in progress</div>
+        <h3>Multi-stream Twitter ingestion</h3>
+        <p>API client + rate limiter + checkpoint store, mentions / search / DM streams, conversation linker. Eight PRs out for review (OD-650 → OD-661). All persistence paths now have fail-safe checkpoint logic.</p>
+        <div class="sprint-progress">
+          <div class="progress-bar done"></div>
+          <div class="progress-bar done"></div>
+          <div class="progress-bar done"></div>
+          <div class="progress-bar active"></div>
+          <div class="progress-bar"></div>
+        </div>
+      </div>
+      <div class="now-card" data-hover>
+        <div class="label">Up next · sprint 3</div>
+        <h3>Response pipeline + compliance</h3>
+        <p>Signal-keyed config validation, Nova wire contract (NovaDraftRequest/Response), opt-out registry, PII scrub, trigger-eligibility gates, and audit + cost logging to activity_v2. End-to-end tests close out the integration.</p>
+        <div class="sprint-progress">
+          <div class="progress-bar"></div>
+          <div class="progress-bar"></div>
+          <div class="progress-bar"></div>
+          <div class="progress-bar"></div>
+          <div class="progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact reveal">
+  <div class="container">
+    <div class="label" style="justify-content: center; margin-bottom: 24px;">Get in touch</div>
+    <h2 style="margin: 0 auto 40px;">Have a hard distributed-systems problem?<br><em>Let's talk.</em></h2>
+    <a href="mailto:chris@tlabs.ai" class="contact-email" data-hover>chris@tlabs.ai</a>
+    <div class="socials">
+      <a href="mailto:chris@tlabs.ai" data-hover>Email</a>
+      <a href="https://github.com" target="_blank" rel="noopener" data-hover>GitHub</a>
+      <a href="https://www.linkedin.com" target="_blank" rel="noopener" data-hover>LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© <span id="year"></span> Chris · TLabs / Opendots</div>
+  <div>Crafted with care · No frameworks were harmed</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  let mouseX = 0, mouseY = 0, curX = 0, curY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursor.classList.add('active');
+  });
+  function loop() {
+    curX += (mouseX - curX) * 0.18;
+    curY += (mouseY - curY) * 0.18;
+    cursor.style.left = curX + 'px';
+    cursor.style.top  = curY + 'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+  document.querySelectorAll('[data-hover]').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+  });
+
+  // Nav scroll state
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 24);
+  });
+
+  // Reveal on scroll
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -80px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Footer year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Subtle parallax on aurora
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    document.querySelectorAll('.aurora').forEach((el, i) => {
+      const f = i === 0 ? 1 : -0.7;
+      el.style.transform = `translate(${x*f}px, ${y*f}px)`;
+    });
+  });
+</script>
+
+</body>
 </html>
